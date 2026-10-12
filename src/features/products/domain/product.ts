@@ -93,13 +93,13 @@ export function toProductView(product: Product): ProductView {
   // TODO(Parte 3): reemplazar este relleno por la implementación real.
   return {
     id: product.id,
-    name: product.name,
-    priceLabel: '',
+    name: product.name.trim(),
+    priceLabel: formatCOP(product.price),
     category: product.category,
     stock: product.stock,
-    stockLabel: '',
-    isLowStock: false,
-    isOutOfStock: false,
+    stockLabel: product.stock === 0 ? 'Agotado' : product.stock < LOW_STOCK_THRESHOLD ? 'Pocas unidades' : 'Disponible',
+    isLowStock: product.stock > 0 && product.stock < LOW_STOCK_THRESHOLD,
+    isOutOfStock: product.stock === 0,
   };
 }
 
@@ -116,9 +116,13 @@ export function toProductView(product: Product): ProductView {
  * TODO(Parte 3): implementar (hoy da por válido cualquier dato).
  */
 export function validateProduct(input: ProductInput): ValidationResult {
-  // TODO(Parte 3): validar `input` y devolver los errores por campo.
-  void input;
-  return { isValid: true, errors: {} };
+  const errors: ValidationResult['errors'] = {};
+  if (typeof input.name !== 'string' || !input.name.trim()) errors.name = 'Escribe un nombre.';
+  else if (input.name.length > NAME_MAX_LENGTH) errors.name = 'Usa máximo 60 caracteres.';
+  if (typeof input.price !== 'number' || !Number.isFinite(input.price) || input.price <= 0) errors.price = 'El precio debe ser un número mayor que 0.';
+  if (!CATEGORIES.some((category) => category === input.category)) errors.category = 'Selecciona una categoría válida.';
+  if (!Number.isInteger(input.stock) || input.stock < 0) errors.stock = 'El stock debe ser un entero mayor o igual que 0.';
+  return { isValid: Object.keys(errors).length === 0, errors };
 }
 
 /**
@@ -133,7 +137,7 @@ export function validateProduct(input: ProductInput): ValidationResult {
  * TODO(Parte 3): implementar (hoy devuelve la lista sin filtrar).
  */
 export function filterProducts(products: Product[], filters: ProductFilters): Product[] {
-  // TODO(Parte 3): aplicar `filters.search` y `filters.category`.
-  void filters;
-  return products;
+  const search = filters.search.trim().toLowerCase();
+  return products.filter((product) => product.name.toLowerCase().includes(search)
+    && (!filters.category || product.category === filters.category));
 }
