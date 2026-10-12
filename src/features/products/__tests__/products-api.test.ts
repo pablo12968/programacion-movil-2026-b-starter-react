@@ -29,4 +29,3 @@ describe('API de productos (ejemplo)', () => {
     expect(body).toEqual({ error: expect.any(String), details: expect.any(Array) });
   });
 });
-

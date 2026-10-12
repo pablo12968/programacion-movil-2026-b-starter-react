@@ -33,4 +33,3 @@ describe('formatCOP (ejemplo)', () => {
     expect(formatCOP(950)).toBe('$ 950');
   });
 });
-
