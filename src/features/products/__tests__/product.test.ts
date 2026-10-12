@@ -33,20 +33,3 @@ describe('formatCOP (ejemplo)', () => {
     expect(formatCOP(950)).toBe('$ 950');
   });
 });
-
-/**
- * TODO(Parte 5): agregue sus pruebas UNITARIAS aquí (o en archivos nuevos dentro de __tests__/).
- * Mínimo dos de estas funciones del dominio: `validateProduct`, `toProductView` o `filterProducts`.
- * Quite el `.todo` cuando escriba el cuerpo de cada una.
- */
-describe('validateProduct', () => {
-  it.todo('rechaza un nombre vacío, un precio menor o igual que 0 y una categoría no permitida');
-});
-
-describe('toProductView', () => {
-  it.todo('formatea el precio en pesos y marca «Agotado» y «Pocas unidades»');
-});
-
-describe('filterProducts', () => {
-  it.todo('filtra por texto sin distinguir mayúsculas y por categoría exacta');
-});

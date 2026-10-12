@@ -1,21 +1,33 @@
+import { IonButton, IonCard, IonIcon } from '@ionic/react';
+import { arrowForwardOutline, cafeOutline, cubeOutline, homeOutline, sparklesOutline } from 'ionicons/icons';
 import type { ProductView } from '../domain/product';
 
 export interface ProductCardProps {
   product: ProductView;
-  /** Se invoca con el id del producto cuando la persona toca la tarjeta. */
   onSelect?: (id: number) => void;
 }
+const CATEGORY_ICONS: Record<string, string> = { Bebidas: cafeOutline, Snacks: cubeOutline, Aseo: sparklesOutline, Hogar: homeOutline };
 
-/**
- * Tarjeta reutilizable de un producto (se usa en la lista).
- *
- * TODO(Parte 3): derivarla de `EmptyState.tsx` (mismo estilo de props tipadas) y construirla con
- * componentes de Ionic (IonItem, IonLabel...), mostrando nombre, categoría, precio y la etiqueta
- * de stock (`stockLabel`), con un aviso visible cuando hay pocas unidades o está agotado.
- * Hoy solo muestra el nombre.
- */
 const ProductCard: React.FC<ProductCardProps> = ({ product, onSelect }) => (
-  <div onClick={() => onSelect?.(product.id)}>{product.name}</div>
+  <IonCard className="product-card">
+    <div className={`product-art category-${product.category.toLowerCase()}`} aria-hidden="true">
+      <IonIcon icon={CATEGORY_ICONS[product.category] ?? cubeOutline} />
+      <span className="art-index">{String(product.id).padStart(2, '0')}</span>
+    </div>
+    <div className="product-card-body">
+      <span className="eyebrow">{product.category}</span>
+      <h2>{product.name}</h2>
+      <p className="product-price">{product.priceLabel}</p>
+      <div className="stock-row">
+        <span className={`stock-label ${product.isOutOfStock ? 'stock-empty' : product.isLowStock ? 'stock-low' : 'stock-ok'}`}>
+          <span aria-hidden="true">● </span>{product.stockLabel}
+        </span>
+        <span>{product.stock} uds.</span>
+      </div>
+      <IonButton expand="block" fill="clear" className="card-action" onClick={() => onSelect?.(product.id)} aria-label={`Ver ${product.name}`}>
+        Ver producto <IonIcon icon={arrowForwardOutline} slot="end" />
+      </IonButton>
+    </div>
+  </IonCard>
 );
-
 export default ProductCard;

@@ -1,107 +1,129 @@
-# Catálogo de productos · Starter Ionic React (versión 2)
+# Estante · Catálogo de productos
 
-Parcial práctico del corte 2 · Programación Móvil · CORHUILA 2026-B (modalidad individual).
+Parcial práctico C2 · Programación Móvil · CORHUILA 2026-B.
+**Estudiante:** Pablo Esteban Santana Vidal · **GitHub:** pablo12968.
 
-Este repositorio es el punto de partida. El proyecto tiene tres piezas que se construyen durante el parcial, siguiendo el [Mobile Governance Framework](https://github.com/jesusarielgb-works/mobile-governance-framework):
+Aplicación Ionic React + TypeScript que administra productos mediante una API Express propia. Permite buscar por nombre, filtrar por categoría, crear, consultar, editar y eliminar con confirmación. Incluye ejercicio Kotlin independiente, documentación previa y pruebas automatizadas.
 
-- **API Express** (`server/`): CRUD de productos con validación, filtros y manejo de errores.
-- **App Ionic React** (`src/`): lista con búsqueda y filtro, detalle, y formulario de crear y editar, organizada por capas.
-- **Ejercicio Kotlin** (`kotlin/Product.kt`): modelo y funciones básicas, con lo visto en la semana 7.
+![Catálogo en escritorio](docs/evidencias/desktop/01-lista.png)
 
-Además, la **documentación** (`docs/`) se escribe antes del código, a partir de las plantillas del framework.
+## Ejecutar localmente
 
-> El enunciado oficial es el PDF de la actividad en Moodle. Este README es un resumen; si algo difiere, manda el PDF.
-
-## Cómo ejecutar
-
-Requisito: Node.js 22.12 o superior (`node --version`).
+Requisito: Node.js **22.12 o superior** y npm. Trabajar en esta carpeta, donde está package.json.
 
 ```bash
-npm install        # instala dependencias (una sola vez)
-npm run server     # arranca la API en http://localhost:3000
-npm run dev        # arranca la app en http://localhost:5173 (en otra terminal)
-npm test           # corre las pruebas (Vitest)
-npm run lint       # revisión de estilo del código
-npm run build      # revisión de tipos y compilación para producción
+npm install
 ```
 
-La app y la API se ejecutan al mismo tiempo, cada una en su terminal. La app lee la dirección de la API de la variable `VITE_API_URL`: copie `.env.example` como `.env` si necesita cambiarla. El archivo `.env` está ignorado por Git; nunca se versiona.
+Copiar `.env.example` a `.env`: `Copy-Item .env.example .env` en PowerShell o `cp .env.example .env` en macOS/Linux. El valor predeterminado es `VITE_API_URL=http://localhost:3000`. `.env` está ignorado por Git; no contiene credenciales.
 
-Rutas de la app, ya creadas como pantallas esqueleto: `/productos` (lista), `/productos/nuevo`, `/productos/:id` (detalle) y `/productos/:id/editar`.
+En la primera terminal:
+```bash
+npm run server
+```
+En otra terminal, sin cerrar la primera:
+```bash
+npm run dev
+```
 
-Hoy la API responde `501 Not implemented` en cada ruta de `/api/products`, y las pantallas muestran un `TODO`. Construir esa funcionalidad es el trabajo del parcial.
+Abrir **http://localhost:5173/productos**. API: **http://localhost:3000/api/products**. Mantener libres los puertos 3000 y 5173: el CORS del starter permite localhost y 127.0.0.1 en 5173. Si se cambia VITE_API_URL, reiniciar Vite. Para detener, Ctrl+C en cada terminal.
 
-## Flujo de entrega
+**Persistencia:** los ocho productos semilla se copian a memoria. Al reiniciar la API se pierden los cambios, como exige el parcial. No se necesita base de datos ni cuenta de usuario.
 
-1. Haga un **fork** de este repositorio a su cuenta de GitHub y clónelo.
-2. Cree una rama de funcionalidad: `git switch -c feature/productos`.
-3. Trabaje la lista de [TODO.md](./TODO.md), en orden, con commits pequeños en formato [Conventional Commits](https://www.conventionalcommits.org/): `type(scope): resumen` (por ejemplo, `docs(productos): describe la funcionalidad` o `feat(api): agrega el endpoint de lista`).
-4. Los documentos de `docs/` van **antes** que el código: el primer commit de código debe ser posterior al commit de documentación.
-5. Abra un **Pull Request hacia el `main` de su propio fork** (no hacia el repositorio original), con una descripción de lo hecho y el checklist de `docs/definition-of-done.md` marcado.
-6. Pegue el **enlace del PR** en la actividad de Moodle (texto en línea) antes del cierre: sábado 10 de octubre de 2026, 11:59 p. m.
+## Rutas y uso
 
-## Qué se evalúa (5,0)
-
-| Parte | Puntos |
+| Ruta | Funcionalidad |
 |---|---|
-| 1. Documentar antes de codificar | 0,75 |
-| 2. API Express | 1,0 |
-| 3. App Ionic | 1,5 |
-| 4. Kotlin | 0,5 |
-| 5. Calidad | 0,5 |
-| 6. Git y entrega | 0,25 |
-| 7. Inglés | 0,5 |
+| `/productos` | Búsqueda, cinco filtros, carga, vacío, sin resultados y error con reintento |
+| `/productos/nuevo` | Crear con validación por campo |
+| `/productos/:id` | Datos completos, editar y confirmar/cancelar eliminación |
+| `/productos/:id/editar` | Cargar valores y actualizar mediante PUT |
 
-El detalle de cada criterio está en [TODO.md](./TODO.md).
+Reglas: nombre no vacío de máximo 60 caracteres, precio finito mayor que 0, categoría Bebidas/Snacks/Aseo/Hogar y stock entero no negativo. Precio mostrado en COP. Stock 0 = Agotado; 1–4 = Pocas unidades; desde 5 = Disponible.
 
-## Contrato de la API (resumen)
-
-Recurso `/api/products` con `{ id: number, name: string, price: number, category: string, stock: integer }`. Los datos semilla están en `server/data/products.json` y se guardan en memoria (se reinician al reiniciar el servidor).
-
-| Método y ruta | Éxito | Errores |
-|---|---|---|
-| `GET /api/products?search=&category=` | 200 + arreglo | — |
-| `GET /api/products/:id` | 200 + objeto | 400 (id no numérico) · 404 |
-| `POST /api/products` | 201 + objeto creado | 400 |
-| `PUT /api/products/:id` | 200 + objeto actualizado | 400 · 404 |
-| `DELETE /api/products/:id` | 204 sin cuerpo | 400 · 404 |
-
-Validación: `name` obligatorio (máximo 60 caracteres), `price` número mayor que 0, `category` una de `Bebidas`, `Snacks`, `Aseo` o `Hogar`, y `stock` entero mayor o igual que 0. Todo error usa el formato `{ "error": "mensaje", "details": ["..."] }`; una ruta desconocida responde 404 con ese formato, y un error inesperado, 500.
-
-## Estructura
+## Arquitectura y gobierno
 
 ```text
-docs/                         plantillas del framework (se copian y se llenan)
-  features/ screens/ decisions/ api/ definition-of-done.md
-kotlin/Product.kt             ejercicio Kotlin (esqueleto)
-server/
-  app.js                      createApp(): rutas de la API (stubs 501) + piezas ya dadas
-  index.js                    arranque en el puerto 3000
-  data/products.json          8 productos semilla
-src/app/                      arranque, rutas y tema
-src/features/products/        funcionalidad organizada por capas del framework
-  data/                       config.ts (API_URL), api-error.ts (ApiError), products-api.ts (cliente fetch)
-  domain/product.ts           tipos, formatCOP (dado), validateProduct, toProductView, filterProducts
-  presentation/               páginas, EmptyState (dado, modelo de props tipadas) y ProductCard
-  __tests__/                  test-server.ts (helper dado), pruebas de ejemplo y espacio para las suyas
+server/                           Express: cinco endpoints y semilla en memoria
+src/features/products/
+  domain/product.ts               Tipos y funciones puras de negocio
+  data/                           API_URL, ApiError y cliente HTTP
+  presentation/                   Páginas, ProductCard y EmptyState
+  __tests__/                      Dominio, API y cliente HTTP
+docs/                             Especificaciones y evidencias
+kotlin/Product.kt                 Modelo nullable y descuento
+e2e/                              Flujos de navegador móvil/escritorio
 ```
 
-Capas (framework, `01-architecture/layers-and-state`): `presentation` depende de `domain` y de `data`; `data` depende de `domain`; `domain` no depende de nada. El estado de cada pantalla puede vivir en la misma página con `useState` y `useEffect`.
+Se utilizó el [starter Ionic React oficial](https://github.com/code-corhuila/programacion-movil-2026-b-starter-react) y las plantillas del [Mobile Governance Framework](https://github.com/jesusarielgb-works/mobile-governance-framework), con las adaptaciones de alcance que permite el PDF. Las piezas resueltas del starter se conservaron: express.json, CORS, parseId, manejadores 404/500, API_URL, ApiError, request, getProducts, formatCOP, EmptyState y startTestServer.
 
-## Qué ya viene resuelto
+La documentación se escribió y registró **antes del primer cambio de código**: commit `175f5f8`. El PDF enumera siete grupos documentales; al separar las tres pantallas y dos ADR resultan nueve archivos completados.
 
-Para concentrar el parcial en lo trabajado en clase, algunas piezas vienen hechas y con comentarios en español. Se usan y se explican (ADR-002 y la sección «API error handling»), pero no se piden escritas:
+- [Feature productos](docs/features/productos.md)
+- Pantallas: [lista](docs/screens/lista.md), [detalle](docs/screens/detalle.md), [crear/editar](docs/screens/formulario.md)
+- Decisiones: [estado](docs/decisions/ADR-001-estado.md), [API](docs/decisions/ADR-002-consumo-api.md)
+- Contratos: [cinco endpoints](docs/api/products-endpoints.md), [entidad](docs/api/product-entity.md)
+- [Definition of Done](docs/definition-of-done.md)
 
-- **Servidor:** `express.json()`, `cors()`, `parseId()`, el manejador 404 de rutas desconocidas y el manejador central de errores (500), en `server/app.js`.
-- **Cliente:** `API_URL` (`data/config.ts`), la clase `ApiError` y `getErrorMessage` (`data/api-error.ts`), y `getProducts` resuelta como ejemplo (con la función `request`) en `data/products-api.ts`.
-- **Dominio:** `formatCOP()`.
-- **Presentación:** `EmptyState` como modelo de componente con props tipadas; el esqueleto de la lista (carga con `useEffect` e `IonItem`/`IonLabel`) y el campo `IonInput` del formulario.
-- **Pruebas:** el helper `startTestServer()` y un ejemplo de prueba de la API.
+## Contrato API
 
-## Entrega: secciones de este README
+| Método | Ruta | Éxito | Errores |
+|---|---|---|---|
+| GET | `/api/products?search=&category=` | 200 arreglo | — |
+| GET | `/api/products/:id` | 200 objeto | 400, 404 |
+| POST | `/api/products` | 201 objeto | 400 |
+| PUT | `/api/products/:id` | 200 objeto | 400, 404 |
+| DELETE | `/api/products/:id` | 204 sin cuerpo | 400, 404 |
 
-Al terminar, agregue aquí abajo las dos secciones escritas en inglés (3 a 5 frases cada una) que indica la Parte 7 de [TODO.md](./TODO.md): **State management decision** y **API error handling**. También actualice este README con cualquier paso adicional necesario para ejecutar su versión.
+POST/PUT reciben `{"name":"Café","price":8500,"category":"Bebidas","stock":4}`. El servidor asigna un id incremental, que no reutiliza al eliminar. Todos los errores tienen `{ "error": "mensaje", "details": ["..."] }`; las validaciones acumulan los problemas de todos los campos.
 
----
+## Pruebas y evidencias
 
-Las plantillas de `docs/` provienen del Mobile Governance Framework (licencia MIT; ver `docs/LICENSE-mobile-governance-framework.txt`).
+```bash
+npm test
+npm run lint
+npm run build
+```
+
+Resultado local verificado: **36 pruebas aprobadas**, cero pendientes, lint y compilación correctos. La compilación advierte del tamaño del paquete de Ionic, pero no presenta errores de tipos ni de build.
+
+Para reproducir las **6 pruebas E2E**, cerrar los servidores manuales para liberar sus puertos:
+```bash
+npx playwright install chromium
+npm run test:e2e
+```
+Playwright inicia/cierra ambos servidores y comprueba el CRUD real, validación, filtros, cancelación de borrado, vacío, carga, red desconectada, reintento, 404 y details del servidor en escritorio (1440×1000) y móvil (390×844). Las respuestas simuladas se usan solo para estados de error/vacío; el ciclo CRUD usa Express real. Las capturas se regeneran en docs/evidencias. GitHub Actions ejecuta las mismas comprobaciones en cada push/PR.
+
+Ver [informe de verificación](docs/evidencias/VERIFICACION.md) y [guía de demostración](docs/GUIA-DEMOSTRACION.md).
+
+## Kotlin
+
+Pegar **todo** [kotlin/Product.kt](kotlin/Product.kt) en [Kotlin Playground](https://play.kotlinlang.org/) y pulsar Run. No requiere Android ni librerías adicionales. También se verificó localmente con Kotlin 2.4.21 y JDK 21:
+```bash
+kotlinc kotlin/Product.kt -include-runtime -d Product.jar
+java -jar Product.jar
+```
+
+Salida:
+```text
+1. Café colombiano | Bebidas | Sin dato | Precio con 10% de descuento: $ 9000.0
+2. Galletas de avena | Snacks | Agotado | Precio con 10% de descuento: $ 2430.0
+3. Jabón de manos | Aseo | Pocas unidades | Precio con 10% de descuento: $ 6210.0
+```
+`id` usa val porque es estable; los campos editables usan var. `stock: Int?` admite null y stockLabel lo comprueba antes de comparar números. applyDiscount usa división decimal para evitar truncar el porcentaje.
+
+## State management decision
+
+Each page keeps its own state with React useState and loads data with useEffect. This is enough for one small feature because filters and form values do not need a global store. The API is the source of truth, and each page reloads when navigation returns to it so that saved changes appear immediately. Effect cleanup ignores stale responses after the user leaves a page. If the application grows, I would introduce a shared repository and cache and document that change in a new ADR.
+
+## API error handling
+
+The HTTP client throws ApiError with a null status when fetch cannot reach the server, while unsuccessful HTTP responses keep their status code and details. The form shows the server message and every detail without clearing the user's input, and read errors offer a retry action. The provided unknown-route middleware returns a 404 JSON response, and my contract test requests /api/ruta-inexistente to verify both the status and its method-and-path detail. The central four-argument error handler returns 400 for malformed JSON and a generic 500 for unexpected exceptions without exposing stack traces. The client also handles a successful DELETE as an empty 204 response instead of trying to parse JSON.
+
+## Entrega
+
+Rama `feature/catalogo-productos`; commits convencionales y documentación primero. Abrir PR hacia **main del propio fork**, con la descripción y checklist de [docs/PR-DESCRIPTION.md](docs/PR-DESCRIPTION.md). En Moodle se pega únicamente el enlace del PR como texto en línea; no se suben archivos.
+
+El cierre válido es el del PDF entregado: **lunes 12 de octubre de 2026, 11:59 p. m. (Colombia)**. Las fechas antiguas del README/TODO del starter no prevalecen sobre el PDF. La entrega no exige hacer merge del PR.
+
+**Pull Request de entrega:** https://github.com/pablo12968/programacion-movil-2026-b-starter-react/pull/1
