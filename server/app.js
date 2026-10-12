@@ -47,30 +47,63 @@ function createApp() {
   app.use(express.json());
 
   // Almacenamiento en memoria: copia de la semilla (se reinicia con el servidor).
-  // TODO(Parte 2): úselo en las rutas de abajo y lleve la cuenta del siguiente id.
   const products = seedProducts.map((item) => ({ ...item }));
-  void products;
-  void CATEGORIES;
-  void parseId;
+  let nextId = Math.max(...products.map((product) => product.id)) + 1;
 
-  const notImplemented = (_req, res) => {
-    res.status(501).json({ error: 'Not implemented' });
-  };
+  app.get('/api/products', (req, res) => {
+    const search = typeof req.query.search === 'string' ? req.query.search.trim().toLowerCase() : '';
+    const category = typeof req.query.category === 'string' ? req.query.category : '';
+    res.json(products.filter((product) =>
+      product.name.toLowerCase().includes(search) && (!category || product.category === category)));
+  });
 
-  // TODO(Parte 2): GET /api/products con filtros. Los parámetros llegan en `req.query`:
-  //   const { search, category } = req.query;
-  //   `search`: el nombre contiene el texto, sin distinguir mayúsculas (toLowerCase + includes).
-  //   `category`: igual a la categoría (exacta). Use `.filter` sobre el arreglo.
-  app.get('/api/products', notImplemented);
-  // TODO(Parte 2): GET /api/products/:id → 200 | 400 (parseId devuelve null) | 404 (no existe).
-  app.get('/api/products/:id', notImplemented);
-  // TODO(Parte 2): POST /api/products → 201 con el producto creado | 400 con { error, details[] }.
-  //   Patrón de validación:  const details = [];  if (...) details.push('mensaje');
-  app.post('/api/products', notImplemented);
-  // TODO(Parte 2): PUT /api/products/:id → 200 con el producto actualizado | 400 | 404.
-  app.put('/api/products/:id', notImplemented);
-  // TODO(Parte 2): DELETE /api/products/:id → 204 sin cuerpo (res.status(204).end()) | 400 | 404.
-  app.delete('/api/products/:id', notImplemented);
+  // Middleware compartido: resuelve el id y evita repetir 400/404 en tres rutas.
+  function findProduct(req, res, next) {
+    const id = parseId(req.params.id);
+    if (id === null) {
+      return res.status(400).json({ error: 'Id inválido', details: ['id debe contener solo dígitos'] });
+    }
+    const product = products.find((item) => item.id === id);
+    if (!product) {
+      return res.status(404).json({ error: 'Producto no encontrado', details: [`No existe el producto ${id}`] });
+    }
+    res.locals.product = product;
+    next();
+  }
+
+  function validateBody(req, res, next) {
+    const { name, price, category, stock } = req.body ?? {};
+    const details = [];
+    if (typeof name !== 'string' || name.trim() === '') details.push('name es obligatorio');
+    else if (name.length > 60) details.push('name debe tener máximo 60 caracteres');
+    if (typeof price !== 'number' || !Number.isFinite(price) || price <= 0) details.push('price debe ser un número finito mayor que 0');
+    if (!CATEGORIES.includes(category)) details.push('category debe ser Bebidas, Snacks, Aseo u Hogar');
+    if (!Number.isInteger(stock) || stock < 0) details.push('stock debe ser un entero mayor o igual que 0');
+    if (details.length) return res.status(400).json({ error: 'Datos inválidos', details });
+    // Lista explícita de campos: el cliente no puede sobrescribir el id.
+    res.locals.input = { name: name.trim(), price, category, stock };
+    next();
+  }
+
+  app.get('/api/products/:id', findProduct, (_req, res) => res.json(res.locals.product));
+
+  app.post('/api/products', validateBody, (_req, res) => {
+    const product = { id: nextId++, ...res.locals.input };
+    products.push(product);
+    res.status(201).json(product);
+  });
+
+  app.put('/api/products/:id', findProduct, validateBody, (_req, res) => {
+    const index = products.findIndex((item) => item.id === res.locals.product.id);
+    products[index] = { id: res.locals.product.id, ...res.locals.input };
+    res.json(products[index]);
+  });
+
+  app.delete('/api/products/:id', findProduct, (_req, res) => {
+    const index = products.findIndex((item) => item.id === res.locals.product.id);
+    products.splice(index, 1);
+    res.status(204).end();
+  });
 
   // YA DADO: ruta desconocida → 404 con el formato de error uniforme.
   app.use((req, res) => {
