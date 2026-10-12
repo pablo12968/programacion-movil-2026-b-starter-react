@@ -1,6 +1,6 @@
 # Feature — Catálogo de productos
 - **Owner:** Pablo Esteban Santana Vidal
-- **Status:** Planned
+- **Status:** Implemented and locally verified; PR pending
 - **Related stories:** CAT-01 consultar, CAT-02 crear, CAT-03 editar, CAT-04 eliminar.
 
 ## Purpose

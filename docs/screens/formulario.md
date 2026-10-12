@@ -10,7 +10,7 @@ Capturar los atributos editables con reglas iguales a la API.
 | Region | Component | Notes |
 |---|---|---|
 | Header | IonToolbar | Nuevo / Editar producto |
-| Body | IonInput / IonSelect | Nombre, precio COP, categoría, stock |
+| Body | IonInput / IonButton | Nombre, precio COP, categoría, stock |
 | Validation | Mensajes asociados | validateProduct por campo |
 | Server errors | Alerta + lista | error y cada details |
 | CTA | IonButton | Guardar y Cancelar |
