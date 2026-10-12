@@ -30,14 +30,3 @@ describe('API de productos (ejemplo)', () => {
   });
 });
 
-/**
- * TODO(Parte 5): agregue sus pruebas de la API aquí, con el mismo patrón. Mínimo dos, por ejemplo:
- * POST con datos inválidos → 400 con `details`, y GET de un id inexistente → 404.
- */
-describe('POST /api/products', () => {
-  it.todo('responde 400 con { error, details } cuando los datos no validan');
-});
-
-describe('GET /api/products/:id', () => {
-  it.todo('responde 404 cuando el producto no existe');
-});

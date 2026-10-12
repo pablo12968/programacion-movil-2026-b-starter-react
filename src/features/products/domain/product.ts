@@ -6,8 +6,7 @@
  * (regla de dependencias del framework: el dominio no depende de nada de afuera).
  *
  * Los tipos, las constantes y `formatCOP` ya vienen dados. Las tres funciones
- * `toProductView`, `validateProduct` y `filterProducts` son STUBS: se implementan
- * en la Parte 3 del TODO.md.
+ * `toProductView`, `validateProduct` y `filterProducts` implementan el contrato del catálogo.
  */
 
 /** Producto tal como lo entrega la API. */
@@ -87,10 +86,8 @@ export function formatCOP(value: number): string {
  *  - `stockLabel`: «Agotado» si stock = 0 · «Pocas unidades» si stock < LOW_STOCK_THRESHOLD · «Disponible» en otro caso.
  *  - `isOutOfStock` e `isLowStock` coherentes con la etiqueta; `id`, `category` y `stock` pasan sin cambios.
  *
- * TODO(Parte 3): implementar (hoy devuelve valores de relleno).
  */
 export function toProductView(product: Product): ProductView {
-  // TODO(Parte 3): reemplazar este relleno por la implementación real.
   return {
     id: product.id,
     name: product.name.trim(),
@@ -113,7 +110,6 @@ export function toProductView(product: Product): ProductView {
  *  - `stock`: entero mayor o igual que 0.
  *  - `errors` trae un mensaje por cada campo inválido; `isValid` es true solo si no hay errores.
  *
- * TODO(Parte 3): implementar (hoy da por válido cualquier dato).
  */
 export function validateProduct(input: ProductInput): ValidationResult {
   const errors: ValidationResult['errors'] = {};
@@ -134,7 +130,6 @@ export function validateProduct(input: ProductInput): ValidationResult {
  *  - `category`: conserva solo los de esa categoría exacta (vacío = todas).
  *  - Devuelve un arreglo nuevo; no modifica el original.
  *
- * TODO(Parte 3): implementar (hoy devuelve la lista sin filtrar).
  */
 export function filterProducts(products: Product[], filters: ProductFilters): Product[] {
   const search = filters.search.trim().toLowerCase();

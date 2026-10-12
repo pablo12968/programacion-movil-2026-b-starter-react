@@ -2,6 +2,9 @@
 node_modules/
 dist/
 coverage/
+test-results/
+playwright-report/
+*.jar
 
 # secretos y configuración local: NUNCA se versionan (sí .env.example)
 .env
