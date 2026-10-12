@@ -125,3 +125,5 @@ The HTTP client throws ApiError with a null status when fetch cannot reach the s
 Rama `feature/catalogo-productos`; commits convencionales y documentación primero. Abrir PR hacia **main del propio fork**, con la descripción y checklist de [docs/PR-DESCRIPTION.md](docs/PR-DESCRIPTION.md). En Moodle se pega únicamente el enlace del PR como texto en línea; no se suben archivos.
 
 El cierre válido es el del PDF entregado: **lunes 12 de octubre de 2026, 11:59 p. m. (Colombia)**. Las fechas antiguas del README/TODO del starter no prevalecen sobre el PDF. La entrega no exige hacer merge del PR.
+
+**Pull Request de entrega:** https://github.com/pablo12968/programacion-movil-2026-b-starter-react/pull/1

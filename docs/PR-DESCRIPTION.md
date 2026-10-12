@@ -24,7 +24,7 @@ El starter respondía 501 y mostraba pantallas pendientes. Esta entrega implemen
 - [x] .env ignorado, .env.example presente; sin secretos ni node_modules en Git.
 - [x] README de ejecución y dos secciones en inglés de 3–5 frases.
 - [x] Rama feature/catalogo-productos, seis o más commits convencionales.
-- [ ] PR descrito con checklist hacia main del propio fork.
+- [x] PR descrito con checklist hacia main del propio fork.
 - [ ] Enlace del PR entregado en Moodle antes del cierre del PDF.
 
 ## Alcance
